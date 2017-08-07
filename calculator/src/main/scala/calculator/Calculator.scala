@@ -1,7 +1,5 @@
 package calculator
 
-import scala.annotation.tailrec
-
 sealed abstract class Expr
 
 final case class Literal(v: Double) extends Expr
@@ -57,20 +55,6 @@ object Calculator {
           evalWithHistory(newResolved, b, references)
     }
   }
-
-  @tailrec
-  private def resolve(resolved: Set[Expr], toResolve: Expr, references: Map[String, Signal[Expr]]): Expr =
-    toResolve match {
-      case Ref(name) =>
-        val newExpr = getReferenceExpr(name, references)
-        if (resolved.contains(newExpr)) {
-          Literal(Double.NaN)
-        } else {
-          resolve(resolved + newExpr, newExpr, references)
-        }
-      case _         =>
-        toResolve
-    }
 
   /** Get the Expr for a referenced variables.
     * If the variable is not known, returns a literal NaN.
